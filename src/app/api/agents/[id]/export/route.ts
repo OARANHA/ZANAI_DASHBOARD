@@ -20,26 +20,26 @@ export async function GET(
       );
     }
 
-    // Criar objeto de exportação
+    // Criar objeto de exportação no formato KiloCode
     const exportData = {
-      metadata: {
-        version: '1.0.0',
-        exportedAt: new Date().toISOString(),
-        agentId: agent.id,
-        agentName: agent.name
-      },
-      agent: {
-        name: agent.name,
-        description: agent.description,
-        type: agent.type,
-        config: agent.config,
-        knowledge: agent.knowledge,
-        status: agent.status
-      },
-      workspace: {
-        name: agent.workspace.name,
-        description: agent.workspace.description
-      }
+      customModes: [
+        {
+          slug: agent.slug || agent.name.toLowerCase().replace(/\s+/g, '-'),
+          name: agent.name,
+          roleDefinition: agent.description || `Você é um agente especialista chamado ${agent.name}`,
+          groups: [
+            "read",
+            ["edit", { "fileRegex": "\\.(md|ts|js|py|java|cpp|c|h|go|rs|php|rb)$", "description": "Arquivos de código e documentação" }]
+          ],
+          customInstructions: agent.config?.instructions || `Siga as diretrizes do agente ${agent.name}`
+        }
+      ],
+      rules: agent.knowledge ? [
+        {
+          filename: "knowledge.md",
+          content: agent.knowledge
+        }
+      ] : []
     };
 
     return NextResponse.json(exportData);

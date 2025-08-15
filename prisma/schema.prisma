@@ -65,6 +65,7 @@ model Workspace {
 model Agent {
   id          String   @id @default(cuid())
   name        String
+  slug        String   @unique
   description String?
   type        String   // 'template', 'custom', 'composed'
   config      String   // YAML com configuração do agente

@@ -106,19 +106,15 @@ Você pode configurar a extensão nas configurações do VS Code:
 ### Estrutura do Projeto
 
 ```
-vscode-extension/
-├── src/
-│   ├── extension.ts          # Ponto de entrada da extensão
-│   └── zanaiCodeIntegration.ts # Lógica principal
-├── package.json              # Configuração da extensão
-├── tsconfig.json            # Configuração TypeScript
-└── README.md                 # Documentação
+src/
+├── extension.ts          # Ponto de entrada da extensão
+├── zanaiCodeIntegration.ts # Lógica principal
+└── package.json          # Configuração da extensão
 ```
 
 ### Compilar
 
 ```bash
-cd vscode-extension
 npm install
 npm run compile
 ```
@@ -126,7 +122,6 @@ npm run compile
 ### Empacotar
 
 ```bash
-cd vscode-extension
 npm install -g vsce
 vsce package
 ```

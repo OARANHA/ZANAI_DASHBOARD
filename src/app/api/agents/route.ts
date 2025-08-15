@@ -12,7 +12,27 @@ export async function GET() {
       }
     });
 
-    return NextResponse.json(agents);
+    // Transformar para o formato esperado pela extensão
+    const formattedAgents = agents.map(agent => ({
+      id: agent.id,
+      name: agent.name,
+      slug: agent.slug,
+      description: agent.description,
+      type: agent.type,
+      roleDefinition: agent.description || `Você é um agente especialista chamado ${agent.name}`,
+      groups: [
+        "read",
+        ["edit", { "fileRegex": "\\.(md|ts|js|py|java|cpp|c|h|go|rs|php|rb)$", "description": "Arquivos de código e documentação" }]
+      ],
+      customInstructions: agent.config ? JSON.parse(agent.config).instructions || `Siga as diretrizes do agente ${agent.name}` : `Siga as diretrizes do agente ${agent.name}`,
+      workspaceId: agent.workspaceId,
+      workspace: {
+        name: agent.workspace.name,
+        description: agent.workspace.description
+      }
+    }));
+
+    return NextResponse.json({ agents: formattedAgents });
   } catch (error) {
     console.error('Erro ao buscar agentes:', error);
     return NextResponse.json(
@@ -33,9 +53,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Generate slug from name
+    const slug = name.toLowerCase()
+      .replace(/[^\w\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .trim();
+
     const agent = await db.agent.create({
       data: {
         name,
+        slug,
         description: description || '',
         type: type || 'template',
         config: config || '',
