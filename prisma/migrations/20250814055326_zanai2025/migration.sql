@@ -44,6 +44,7 @@ CREATE TABLE "Agent" (
     "config" TEXT NOT NULL,
     "knowledge" TEXT,
     "templateId" TEXT,
+    "slug" TEXT NOT NULL,
     "status" TEXT NOT NULL DEFAULT 'active',
     "workspaceId" TEXT NOT NULL,
     "userId" TEXT,

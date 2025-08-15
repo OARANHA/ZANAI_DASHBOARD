@@ -130,7 +130,7 @@ export default function Home() {
       const response = await fetch('/api/agents');
       if (response.ok) {
         const data = await response.json();
-        setAgents(data);
+        setAgents(data:);
         return data;
       } else {
         throw new Error(`API response: ${response.status}`);

@@ -4,6 +4,11 @@ const prisma = new PrismaClient();
 
 async function main() {
   console.log('🌱 Iniciando seed do banco de dados...');
+  
+  const slugify = (s: string) =>
+  s.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+   .toLowerCase().replace(/[^a-z0-9]+/g, "-")
+   .replace(/(^-|-$)+/g, "").slice(0, 64);
 
   // Limpar dados existentes (opcional - comente se não quiser limpar)
   console.log('🧹 Limpando dados existentes...');
@@ -302,8 +307,24 @@ personality: paciente, empático, solucionador`,
   ];
 
   const createdAgents = await Promise.all(
-    agents.map(agent => prisma.agent.create({ data: agent }))
+    agents.map((agent, i) =>
+    prisma.agent.create({
+      data: {
+      ...agent,
+      name: agent.name,
+      description: agent.description,
+      type: agent.type,
+      config: agent.config,
+      knowledge: agent.knowledge,
+      status: agent.status,
+      workspaceId: agent.workspaceId,
+      userId: agent.userId,
+      slug: slugify(`${agent.name}-${i + 1}`),
+    }
+     }))
   );
+
+  
 
   // Criar composições
   console.log('🔗 Criando composições...');
